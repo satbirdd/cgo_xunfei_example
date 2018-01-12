@@ -118,7 +118,7 @@ void run_iat(const char* audio_file, const char* session_begin_params)
 		goto iat_exit;
 	}
 	
-	printf("\n开始语音听写 ...\n");
+	// printf("\n开始语音听写 ...\n");
 	session_id = QISRSessionBegin(NULL, session_begin_params, &errcode); //听写不需要语法，第一个参数为NULL
 	if (MSP_SUCCESS != errcode)
 	{
@@ -140,7 +140,7 @@ void run_iat(const char* audio_file, const char* session_begin_params)
 		if (0 == pcm_count)
 			aud_stat = MSP_AUDIO_SAMPLE_FIRST;
 
-		printf(">");
+		// printf(">");
 		ret = QISRAudioWrite(session_id, (const void *)&p_pcm[pcm_count], len, aud_stat, &ep_stat, &rec_stat);
 		if (MSP_SUCCESS != ret)
 		{
@@ -174,7 +174,7 @@ void run_iat(const char* audio_file, const char* session_begin_params)
 
 		if (MSP_EP_AFTER_SPEECH == ep_stat)
 			break;
-		usleep(200*1000); //模拟人说话时间间隙。200ms对应10帧的音频
+		usleep(2*1000); //模拟人说话时间间隙。200ms对应10帧的音频
 	}
 	errcode = QISRAudioWrite(session_id, NULL, 0, MSP_AUDIO_SAMPLE_LAST, &ep_stat, &rec_stat);
 	if (MSP_SUCCESS != errcode)
@@ -204,10 +204,10 @@ void run_iat(const char* audio_file, const char* session_begin_params)
 		}
 		usleep(150*1000); //防止频繁占用CPU
 	}
-	printf("\n语音听写结束\n");
-	printf("=============================================================\n");
+	// printf("\n语音听写结束\n");
+	// printf("=============================================================\n");
 	printf("%s\n",rec_result);
-	printf("=============================================================\n");
+	// printf("=============================================================\n");
 
 iat_exit:
 	if (NULL != f_pcm)
@@ -223,7 +223,7 @@ iat_exit:
 	QISRSessionEnd(session_id, hints);
 }
 
-int main(int argc, char* argv[])
+int Entry(char* argv)
 {
 	int			ret						=	MSP_SUCCESS;
 	int			upload_on				=	1; //是否上传用户词表
@@ -249,24 +249,25 @@ int main(int argc, char* argv[])
 		goto exit; //登录失败，退出登录
 	}
 
-	printf("\n########################################################################\n");
-	printf("## 语音听写(iFly Auto Transform)技术能够实时地将语音转换成对应的文字。##\n");
-	printf("########################################################################\n\n");
-	printf("演示示例选择:是否上传用户词表？\n0:不使用\n1:使用\n");
+	// printf("\n########################################################################\n");
+	// printf("## 语音听写(iFly Auto Transform)技术能够实时地将语音转换成对应的文字。##\n");
+	// printf("########################################################################\n\n");
+	// printf("演示示例选择:是否上传用户词表？\n0:不使用\n1:使用\n");
 
-	scanf("%d", &upload_on);
-	if (upload_on)
-	{
-		printf("上传用户词表 ...\n");
-		ret = upload_userwords();
-		if (MSP_SUCCESS != ret)
-			goto exit;	
-		printf("上传用户词表成功\n");
-	}
-	run_iat("wav/iflytek02.wav", session_begin_params); //iflytek02音频内容为“中美数控”；如果上传了用户词表，识别结果为：“中美速控”。
+	// scanf("%d", &upload_on);
+	// if (upload_on)
+	// {
+	// 	printf("上传用户词表 ...\n");
+	// 	ret = upload_userwords();
+	// 	if (MSP_SUCCESS != ret)
+	// 		goto exit;	
+	// 	printf("上传用户词表成功\n");
+	// }
+	// run_iat("/home/liulei/works/demo/bin/wav/out2.wav", session_begin_params); //iflytek02音频内容为“中美数控”；如果上传了用户词表，识别结果为：“中美速控”。
+	run_iat(argv, session_begin_params); //iflytek02音频内容为“中美数控”；如果上传了用户词表，识别结果为：“中美速控”。
 exit:
-	printf("按任意键退出 ...\n");
-	getchar();
+	// printf("按任意键退出 ...\n");
+	// getchar();
 	MSPLogout(); //退出登录
 
 	return 0;
