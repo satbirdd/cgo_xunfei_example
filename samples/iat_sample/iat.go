@@ -1,4 +1,4 @@
-package main
+package iat_sample
 
 /*
 #cgo CFLAGS: -I/home/liulei/works/demo/include
@@ -12,13 +12,12 @@ import (
 	"unsafe"
 )
 
-func main() {
-	fileName := "/home/liulei/works/demo/bin/wav/iflytek02.wav"
+func Iat(fileName string) string {
+	// fileName := "/home/liulei/works/demo/bin/wav/iflytek02.wav"
 	cName := C.CString(fileName)
 	defer C.free(unsafe.Pointer(cName))
 
 	output := C.Entry(cName)
 
-	fmt.Printf("-----------> oupt: %v", C.GoString(output))
-
+	return C.GoString(output)
 }
